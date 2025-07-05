@@ -1,0 +1,6 @@
+<h2>Select a character</h2>
+<ul>
+{% for char in characters %}
+  <li><a href="/characters/{{ char }}/">{{ char }}</a></li>
+{% endfor %}
+</ul>

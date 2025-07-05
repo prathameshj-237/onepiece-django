@@ -1,0 +1,9 @@
+<h2>Action scenes of {{ name }}</h2>
+<ul>
+{% for video in videos %}
+  <li>
+    <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>
+  </li>
+{% endfor %}
+</ul>
+<a href="/action/">Back</a>

@@ -1,0 +1,43 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+*.env
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# VS Code settings
+.vscode/
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+*.pidfile
+docker-compose.override.yml
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+#Terraform Cache
+# Terraform sensitive files
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+terraform/.terraform/

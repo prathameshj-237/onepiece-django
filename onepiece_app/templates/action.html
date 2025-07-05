@@ -1,0 +1,6 @@
+<h2>Choose a character to watch action scenes</h2>
+<ul>
+{% for char in characters %}
+  <li><a href="/action/{{ char }}/">{{ char }}</a></li>
+{% endfor %}
+</ul>
