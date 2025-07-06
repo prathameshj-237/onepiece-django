@@ -5,7 +5,7 @@ trigger:
 
 variables:
   imageName: 'onepiece-django-app'
-  azureSubscription: '<Your-Service-Connection-Name>'
+  azureSubscription: 'onepiece-azure-subscription'
   acrLoginServer: 'onepieceacr.azurecr.io'
   kubernetesCluster: 'onepiece-aks'
   kubernetesResourceGroup: 'onepiece_project'
