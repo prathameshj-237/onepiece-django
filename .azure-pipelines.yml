@@ -22,7 +22,7 @@ stages:
 
     - task: Docker@2
       inputs:
-        containerRegistry: '$(azureSubscription)'
+        containerRegistry: 'onepieceacr-connection'
         repository: '$(imageName)'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
