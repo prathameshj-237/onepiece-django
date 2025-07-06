@@ -1,48 +1,62 @@
 trigger:
-  branches:
-    include:
-      - main
+- main
 
 variables:
-  imageName: 'onepiece-django-app'
-  azureSubscription: 'onepiece-azure-subscription'
-  acrLoginServer: 'onepieceacr.azurecr.io'
-  kubernetesCluster: 'onepiece-aks'
-  kubernetesResourceGroup: 'onepiece_project'
+  imageName: onepiece-django-app
+  dockerfilePath: '**/Dockerfile'
+  acrLoginServer: onepieceacr.azurecr.io
+  aksClusterName: onepiece-aks
+  aksResourceGroup: onepiece_project
+  namespace: default
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 stages:
-- stage: Build
+# Stage 1: Build and Push Docker image
+- stage: BuildAndPush
+  displayName: Build and Push Docker Image to ACR
   jobs:
   - job: DockerBuild
+    displayName: Build and Push Job
     steps:
-    - task: Checkout@1
+    - checkout: self
 
     - task: Docker@2
+      displayName: Build and Push to ACR
       inputs:
-        containerRegistry: 'onepieceacr-connection'
+        containerRegistry: 'onepieceacr-connection'  # Docker Registry service connection
         repository: '$(imageName)'
         command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
+        Dockerfile: '$(dockerfilePath)'
         tags: |
           latest
 
-- stage: Deploy
-  dependsOn: Build
+# Stage 2: Deploy to AKS
+- stage: DeployToAKS
+  displayName: Deploy to Azure Kubernetes Service
+  dependsOn: BuildAndPush
   jobs:
-  - job: DeployToAKS
+  - job: DeployJob
+    displayName: Deploy to AKS
     steps:
+    - task: AzureCLI@2
+      displayName: 'Login to AKS and set context'
+      inputs:
+        azureSubscription: 'onepiece-azure-subscription'  # AzureRM service connection
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName) --overwrite-existing
+
     - task: Kubernetes@1
+      displayName: 'Deploy to AKS using kubectl'
       inputs:
         connectionType: 'Azure Resource Manager'
-        azureSubscription: '$(azureSubscription)'
-        azureResourceGroup: '$(kubernetesResourceGroup)'
-        kubernetesCluster: '$(kubernetesCluster)'
-        namespace: default
+        azureSubscription: 'onepiece-azure-subscription'
+        azureResourceGroup: '$(aksResourceGroup)'
+        kubernetesCluster: '$(aksClusterName)'
+        namespace: '$(namespace)'
         command: apply
         useConfigurationFile: true
-        configuration: |
-          k8s/deployment.yaml
-          k8s/service.yaml
+        configuration: 'k8s/deployment.yaml'  # Path to your deployment YAML
