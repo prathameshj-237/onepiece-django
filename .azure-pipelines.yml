@@ -3,14 +3,14 @@ trigger:
 
 variables:
   imageName: onepiece-django-app
-  dockerfilePath: '**/Dockerfile'
+  dockerfilePath: 'Dockerfile'
   acrLoginServer: onepieceacr.azurecr.io
   aksClusterName: onepiece-aks
   aksResourceGroup: onepiece_project
   namespace: default
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 stages:
 # Stage 1: Build and Push Docker image
@@ -25,7 +25,7 @@ stages:
     - task: Docker@2
       displayName: Build and Push to ACR
       inputs:
-        containerRegistry: 'onepieceacr-connection'  # Docker Registry service connection
+        containerRegistry: 'onepieceacr-connection'  # Must be a Docker Registry service connection
         repository: '$(imageName)'
         command: 'buildAndPush'
         Dockerfile: '$(dockerfilePath)'
@@ -49,14 +49,11 @@ stages:
         inlineScript: |
           az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName) --overwrite-existing
 
-    - task: Kubernetes@1
-      displayName: 'Deploy to AKS using kubectl'
+    - task: KubernetesManifest@1
+      displayName: 'Deploy to AKS using manifest'
       inputs:
-        connectionType: 'Azure Resource Manager'
-        azureSubscription: 'onepiece-azure-subscription'
-        azureResourceGroup: '$(aksResourceGroup)'
-        kubernetesCluster: '$(aksClusterName)'
+        action: deploy
+        kubernetesServiceConnection: 'onepiece-k8s-connection'  # This must be a Kubernetes service connection
         namespace: '$(namespace)'
-        command: apply
-        useConfigurationFile: true
-        configuration: 'k8s/deployment.yaml'  # Path to your deployment YAML
+        manifests: |
+          k8s/deployment.yaml
