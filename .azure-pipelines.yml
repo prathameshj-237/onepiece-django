@@ -67,3 +67,13 @@ stages:
         command: apply
         useConfigurationFile: true
         configuration: 'k8s/service.yaml'
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          kubectl get pods > podsinfo.txt
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.WorkingDirectory)/podsinfo.txt'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
