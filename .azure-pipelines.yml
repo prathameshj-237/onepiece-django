@@ -74,6 +74,6 @@ stages:
           kubectl get pods > podsinfo.txt
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.WorkingDirectory)/podsinfo.txt'
+        PathtoPublish: 'podsinfo.txt'
         ArtifactName: 'drop'
         publishLocation: 'Container'
