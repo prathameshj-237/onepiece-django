@@ -62,7 +62,7 @@ stages:
       displayName: 'Apply Service YAML'
       inputs:
         connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceConnection: 'onepiece-k8s-connection'
+        kubernetesServiceEndpoint: 'onepiece-k8s-connection'
         namespace: 'default'
         command: apply
         useConfigurationFile: true
