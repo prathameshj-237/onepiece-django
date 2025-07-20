@@ -14,7 +14,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-# Stage 1: Build and Push Docker image
 - stage: BuildAndPush
   displayName: Build and Push Docker Image to ACR
   jobs:
@@ -26,14 +25,13 @@ stages:
     - task: Docker@2
       displayName: Build and Push to ACR
       inputs:
-        containerRegistry: 'onepieceacr-connection'  # Must be a Docker Registry service connection
+        containerRegistry: 'onepieceacr-connection' 
         repository: '$(imageName)'
         command: 'buildAndPush'
         Dockerfile: '$(dockerfilePath)'
         tags: |
           latest
 
-# Stage 2: Deploy to AKS
 - stage: DeployToAKS
   displayName: Deploy to Azure Kubernetes Service
   dependsOn: BuildAndPush
@@ -44,7 +42,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Login to AKS and set context'
       inputs:
-        azureSubscription: 'onepiece-azure-subscription'  # AzureRM service connection
+        azureSubscription: 'onepiece-azure-subscription' 
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
@@ -54,7 +52,7 @@ stages:
       displayName: 'Deploy to AKS using manifest'
       inputs:
         action: deploy
-        kubernetesServiceConnection: 'onepiece-k8s-connection'  # This must be a Kubernetes service connection
+        kubernetesServiceConnection: 'onepiece-k8s-connection' 
         namespace: '$(namespace)'
         manifests: |
           k8s/deployment.yaml
