@@ -14,7 +14,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- stage: TerraformProvision and Az login
+- stage: SetUpAzLogin
+  displayName: Set up Az Login and AKS credentials
+  jobs:
+  - job: AzJob
+    displayName: Set up Az Login and AKS credentials
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Login to AKS and set context'
+      inputs:
+        azureSubscription: 'onepiece-azure-subscription' 
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName) --overwrite-existing
+
+- stage: TerraformProvision
   displayName: Terraform - Check/Create Infra
   jobs:
   - job: TerraformJob
@@ -24,14 +39,6 @@ stages:
       displayName: Install Terraform
       inputs:
         terraformVersion: '1.12.2'
-    - task: AzureCLI@2
-      displayName: 'Login to AKS and set context'
-      inputs:
-        azureSubscription: 'onepiece-azure-subscription' 
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName) --overwrite-existing
 
     - task: TerraformTask@5
       displayName: Run Terraform Init
