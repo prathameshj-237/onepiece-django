@@ -32,8 +32,8 @@ stages:
         command: 'init'
         backendServiceArm: 'onepiece-azure-subscription'
         backendAzureRmResourceGroupName: 'onepiece_project'
-        backendAzureRmStorageAccountName: '<your-storage-account>'
-        backendAzureRmContainerName: '<your-container>'
+        backendAzureRmStorageAccountName: 'onepieceterraformstorage'
+        backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 
     - task: TerraformTask@5
