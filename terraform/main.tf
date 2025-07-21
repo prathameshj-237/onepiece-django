@@ -1,4 +1,10 @@
 terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=4.1.0"
+    }
+  }
   backend "azurerm" {
     resource_group_name  = "onepiece_project"
     storage_account_name = "onepieceterraformstorage"
@@ -13,7 +19,6 @@ provider "azurerm" {
        prevent_deletion_if_contains_resources = false
     }
   }
-  subscription_id = "5ab4c1eb-7231-4e9f-8cc1-45b5b44ad422"
 }
 
 resource "azurerm_resource_group" "main" {
