@@ -14,14 +14,52 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
+- stage: TerraformProvision
+  displayName: Terraform - Check/Create Infra
+  jobs:
+  - job: TerraformJob
+    displayName: Terraform init, plan, apply
+    steps: 
+    - task: TerraformInstaller@1
+      displayName: Install Terraform
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformTask@5
+      displayName: Run Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'onepiece-azure-subscription'
+        backendAzureRmResourceGroupName: 'onepiece_project'
+        backendAzureRmStorageAccountName: '<your-storage-account>'
+        backendAzureRmContainerName: '<your-container>'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTask@5
+      name: terraformPlan
+      displayName: Run Terraform Plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out tfplan'
+        environmentServiceNameAzureRM: 'onepiece-azure-subscription'
+
+    - task: TerraformTask@5
+      displayName: Run Terraform Apply
+      condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: 'tfplan'
+        environmentServiceNameAzureRM: 'onepiece-azure-subscription'
+
 - stage: BuildAndPush
   displayName: Build and Push Docker Image to ACR
   jobs:
   - job: DockerBuild
     displayName: Build and Push Job
     steps:
-    - checkout: self
-
     - task: Docker@2
       displayName: Build and Push to ACR
       inputs:
