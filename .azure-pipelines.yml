@@ -30,6 +30,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         backendServiceArm: 'onepiece-azure-subscription'
         backendAzureRmResourceGroupName: 'onepiece_project'
         backendAzureRmStorageAccountName: 'onepieceterraformstorage'
@@ -42,6 +43,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         commandOptions: '-out tfplan'
         environmentServiceNameAzureRM: 'onepiece-azure-subscription'
 
@@ -51,6 +53,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         commandOptions: 'tfplan'
         environmentServiceNameAzureRM: 'onepiece-azure-subscription'
 
