@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Straw Hat Crew</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>One Piece Characters</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="mb-4">Straw Hat Characters</h1>
-        <div class="row">
-            {% for character in characters %}
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">{{ character }}</h5>
-                            <a href="{% url 'character_detail' character %}" class="btn btn-outline-primary">View Details</a>
-                        </div>
+<body class="bg-dark text-light">
+<div class="container mt-5">
+    <h1 class="text-center mb-4">One Piece Characters</h1>
+    <div class="row">
+        {% for character in characters %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body text-dark">
+                        <h5 class="card-title">{{ character.name }}</h5>
+                        <p class="card-text">{{ character.description|truncatechars:100 }}</p>
+                        <a href="{% url 'character_detail' character.name %}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
+    <div class="text-center">
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-4">&larr; Back to Home</a>
+    </div>
+</div>
 </body>
 </html>
