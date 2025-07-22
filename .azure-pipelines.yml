@@ -9,6 +9,7 @@ variables:
   aksClusterName: onepiece-aks
   aksResourceGroup: onepiece_project
   namespace: default
+  imageTag: '$(Build.BuildId)'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -71,7 +72,7 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '$(dockerfilePath)'
         tags: |
-          latest
+          $(imageTag)
 
 - stage: DeployToAKS
   displayName: Deploy to Azure Kubernetes Service
@@ -95,8 +96,10 @@ stages:
         action: deploy
         kubernetesServiceConnection: 'onepiece-k8s-connection' 
         namespace: '$(namespace)'
-        manifests: |
-          k8s/deployment.yaml
+        useConfigurationFile: true
+        configuration: |
+          sed 's|IMAGE_TAG|$(imageTag)|g' deployment.yaml > temp-deploy.yaml
+          kubectl apply -f temp-deploy.yaml
 
     - task: Kubernetes@1
       displayName: 'Apply Service YAML'

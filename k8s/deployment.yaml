@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: django
-        image: onepieceacr.azurecr.io/onepiece-django-app:latest
+        image: onepieceacr.azurecr.io/onepiece-django-app:IMAGE_TAG
         ports:
         - containerPort: 8000
         env:
