@@ -96,10 +96,10 @@ stages:
         action: deploy
         kubernetesServiceConnection: 'onepiece-k8s-connection' 
         namespace: '$(namespace)'
-        useConfigurationFile: true
-        configuration: |
-          sed 's|IMAGE_TAG|$(imageTag)|g' deployment.yaml > temp-deploy.yaml
-          kubectl apply -f temp-deploy.yaml
+        manifests: |
+          k8s/deployment.yaml
+        containers: |
+          onepieceacr.azurecr.io/onepiece-django-app:$(imageTag)
 
     - task: Kubernetes@1
       displayName: 'Apply Service YAML'
